@@ -1,0 +1,14 @@
+{
+	"files.exclude": {
+		"**/bin": true,
+		"**/obj": true,
+		"**/.vs": true,
+		"**/*.user": true,
+		"**/*.suo": true,
+		"**/*.cache": true
+	},
+	"search.exclude": {
+		"**/bin": true,
+		"**/obj": true
+	}
+}
