@@ -2,10 +2,10 @@
 
 A learning-focused reference implementation of a **.NET Resource API** built using:
 
-* CQRS (Command Query Responsibility Segregation)
-* Specification-Driven Development (SDD)
-* Vertical Slice Architecture
-* Clean, testable application boundaries
+- CQRS (Command Query Responsibility Segregation)
+- Specification-Driven Development (SDD)
+- Vertical Slice Architecture
+- Clean, testable application boundaries
 
 This repository is not meant to be a production system.
 Its purpose is to **explore architectural thinking**, not just build endpoints.
@@ -16,14 +16,23 @@ Its purpose is to **explore architectural thinking**, not just build endpoints.
 
 This project exists to answer questions like:
 
-* How does CQRS actually feel in a real API?
-* How do specifications replace ad-hoc filtering logic?
-* Can requirements drive code structure instead of the database?
-* How do we design features instead of CRUD endpoints?
+- How does CQRS actually feel in a real API?
+- How do specifications replace ad-hoc filtering logic?
+- Can requirements drive code structure instead of the database?
+- How do we design features instead of CRUD endpoints?
 
-The emphasis is learning *design*, not frameworks.
+The emphasis is learning _design_, not frameworks.
 
 ---
+
+## 🧱 Current Tech Baseline
+
+- ASP.NET Core 8 (`net8.0`)
+- Controller-based API endpoints
+- MediatR for CQRS handlers
+- FluentValidation + global validation exception mapping
+- EF Core + PostgreSQL (`Npgsql`)
+- xUnit integration tests with Testcontainers
 
 ## 🧠 Key Concepts Practiced
 
@@ -31,8 +40,8 @@ The emphasis is learning *design*, not frameworks.
 
 Separate models for:
 
-* **Commands** → change state
-* **Queries** → read state
+- **Commands** → change state
+- **Queries** → read state
 
 No shared logic between read and write flows.
 
@@ -40,9 +49,9 @@ No shared logic between read and write flows.
 
 Business rules are expressed as composable specifications instead of:
 
-* scattered LINQ
-* fat repositories
-* duplicated filters
+- scattered LINQ
+- fat repositories
+- duplicated filters
 
 Specifications become reusable domain knowledge.
 
@@ -63,11 +72,17 @@ We structure around:
 
 ```
 Features/
-    CreateResource/
-    UpdateResource/
-    GetResource/
-    SearchResources/
+    Resources/
+        CreateResource.cs
+        UpdateResource.cs
+        GetResource.cs
+        ListResource.cs
+        DeleteResource.cs
+Controllers/
+    ResourcesController.cs
 ```
+
+Controller actions stay in `Controllers/` and delegate behavior to MediatR handlers in `Features/`.
 
 ---
 
@@ -75,10 +90,10 @@ Features/
 
 The system prioritizes:
 
-* Explicit behavior over generic abstractions
-* Small feature slices over large shared services
-* Domain clarity over DRY at all costs
-* Readability over cleverness
+- Explicit behavior over generic abstractions
+- Small feature slices over large shared services
+- Domain clarity over DRY at all costs
+- Readability over cleverness
 
 If something feels repetitive but clearer → repetition wins.
 
@@ -88,16 +103,16 @@ If something feels repetitive but clearer → repetition wins.
 
 ### ✔ This project is
 
-* A learning sandbox
-* A reference for future projects
-* A place to experiment with architecture safely
-* A notebook of patterns that worked (and failed)
+- A learning sandbox
+- A reference for future projects
+- A place to experiment with architecture safely
+- A notebook of patterns that worked (and failed)
 
 ### ❌ This project is NOT
 
-* A production template
-* A generic reusable framework
-* A demonstration of perfect practices
+- A production template
+- A generic reusable framework
+- A demonstration of perfect practices
 
 Tradeoffs are documented, not hidden.
 
@@ -110,7 +125,10 @@ Tradeoffs are documented, not hidden.
 dotnet restore
 
 # run api
-dotnet run --project src/Api
+dotnet run --project src/ResourceCatalog.Api/ResourceCatalog.Api.csproj
+
+# run tests
+dotnet test tests/ResourceCatalog.Tests/ResourceCatalog.Tests.csproj
 ```
 
 Once running, open:
@@ -131,25 +149,40 @@ https://localhost:<port>/swagger
 
 > The API is the delivery mechanism — not the design center.
 
+### SDD Artifacts
+
+Specifications for each feature live in:
+
+```
+docs/specs/{feature-name}/
+```
+
+Minimum expected artifacts:
+
+- `requirements.md`
+- `design.md`
+
+Implementation starts only after design approval.
+
 ---
 
 ## 📚 What I Expect To Learn
 
-* When CQRS improves clarity — and when it doesn’t
-* How specifications affect testability
-* How vertical slices change feature ownership
-* The cost of abstraction vs duplication
-* How to design behavior instead of tables
+- When CQRS improves clarity — and when it doesn’t
+- How specifications affect testability
+- How vertical slices change feature ownership
+- The cost of abstraction vs duplication
+- How to design behavior instead of tables
 
 ---
 
 ## 🗺️ Planned Experiments
 
-* Pagination & filtering via specifications
-* Business rule validation strategies
-* Transaction boundaries in CQRS
-* Read model optimization
-* Testing strategies (unit vs integration vs behavior)
+- Pagination & filtering via specifications
+- Business rule validation strategies
+- Transaction boundaries in CQRS
+- Read model optimization
+- Testing strategies (unit vs integration vs behavior)
 
 ---
 
