@@ -5,9 +5,17 @@ using ResourceCatalog.Api.Features.Resources;
 namespace ResourceCatalog.Tests.Features.Resources
 {
     public class ResourceEndpointTests(ResourcesApiFactory factory)
-        : IClassFixture<ResourcesApiFactory>
+        : IClassFixture<ResourcesApiFactory>, IAsyncLifetime
     {
-        private readonly HttpClient _client = factory.CreateClient();
+        private HttpClient _client = null!;
+
+        public async Task InitializeAsync()
+        {
+            await factory.ResetDatabaseAsync(); // Reset database to clean state before each test
+            _client = factory.CreateClient();   // Create a new HttpClient for each test to ensure isolation
+        }
+
+        public Task DisposeAsync() => Task.CompletedTask;
 
         [Fact]
         public async Task POST_creates_resource_and_GET_returns_it()

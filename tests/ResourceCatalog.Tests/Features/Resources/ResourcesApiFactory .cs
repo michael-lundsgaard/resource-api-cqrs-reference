@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using ResourceCatalog.Api.Data;
+using Respawn;
 using Testcontainers.PostgreSql;
 
 namespace ResourceCatalog.Tests.Features.Resources
@@ -15,6 +17,8 @@ namespace ResourceCatalog.Tests.Features.Resources
                 .WithUsername("test")
                 .WithPassword("test")
                 .Build();
+
+        private Respawner _respawner = null!;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -33,14 +37,34 @@ namespace ResourceCatalog.Tests.Features.Resources
         {
             await _postgres.StartAsync();
 
+            // Run migrations once, on startup
             using var scope = Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             await db.Database.MigrateAsync();
+
+            // Create the Respawner after the schema exists
+            await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
+            await conn.OpenAsync();
+
+            _respawner = await Respawner.CreateAsync(conn, new RespawnerOptions
+            {
+                DbAdapter = DbAdapter.Postgres,
+                // Respawn will skip these tables when resetting
+                TablesToIgnore = ["__EFMigrationsHistory"]
+            });
         }
 
         public new async Task DisposeAsync()
         {
             await _postgres.DisposeAsync();
+            await base.DisposeAsync();
+        }
+
+        public async Task ResetDatabaseAsync()
+        {
+            await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
+            await conn.OpenAsync();
+            await _respawner.ResetAsync(conn);
         }
     }
 }
