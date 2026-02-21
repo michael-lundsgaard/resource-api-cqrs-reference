@@ -23,7 +23,7 @@ namespace ResourceCatalog.Api.Features.Resources
 
         public class Handler(AppDbContext db) : IRequestHandler<Command, ResourceDto>
         {
-            public async Task<ResourceDto> Handle(Command request, CancellationToken ct)
+            public async Task<ResourceDto> Handle(Command request, CancellationToken cancellationToken)
             {
                 var resource = new Resource
                 {
@@ -34,7 +34,7 @@ namespace ResourceCatalog.Api.Features.Resources
                 };
 
                 db.Resources.Add(resource);
-                await db.SaveChangesAsync(ct);
+                await db.SaveChangesAsync(cancellationToken);
                 return resource.ToDto();
             }
         }

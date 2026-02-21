@@ -14,15 +14,12 @@ namespace ResourceCatalog.Api
         /// <summary>
         /// Configures PostgreSQL database with connection string from configuration
         /// </summary>
-        public static IServiceCollection AddDatabase(
-            this IServiceCollection services,
-            IConfiguration configuration)
+        public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(connectionString));
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
             return services;
         }
@@ -32,10 +29,10 @@ namespace ResourceCatalog.Api
         /// </summary>
         public static IServiceCollection AddMediator(this IServiceCollection services)
         {
-            services.AddMediatR(cfg =>
+            services.AddMediatR(config =>
             {
-                cfg.RegisterServicesFromAssemblyContaining<Program>();
-                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                config.RegisterServicesFromAssemblyContaining<Program>();
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
 
             services.AddValidatorsFromAssemblyContaining<Program>();

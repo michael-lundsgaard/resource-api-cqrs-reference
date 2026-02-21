@@ -17,10 +17,10 @@ namespace ResourceCatalog.Api.Features.Resources
 
         public class Handler(AppDbContext db) : IRequestHandler<Query, Result>
         {
-            public async Task<Result> Handle(Query request, CancellationToken ct)
+            public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
                 var query = db.Resources.AsNoTracking().Where(r => r.Id == request.Id);
-                var resource = await query.FirstOrDefaultAsync(ct);
+                var resource = await query.FirstOrDefaultAsync(cancellationToken);
 
                 if (resource is null) return new NotFound();
 

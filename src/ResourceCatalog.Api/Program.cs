@@ -21,17 +21,17 @@ if (app.Environment.IsDevelopment())
 }
 
 // Convert ValidationException → 400 ValidationProblem
-app.UseExceptionHandler(exApp => exApp.Run(async ctx =>
+app.UseExceptionHandler(exApp => exApp.Run(async context =>
 {
-    var ex = ctx.Features.Get<IExceptionHandlerFeature>()?.Error;
-    if (ex is not ValidationException ve) return;
+    var ex = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+    if (ex is not ValidationException validationEx) return;
 
-    var errors = ve.Errors
+    var errors = validationEx.Errors
         .GroupBy(e => e.PropertyName)
         .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
 
-    ctx.Response.StatusCode = 400;
-    await ctx.Response.WriteAsJsonAsync(
+    context.Response.StatusCode = 400;
+    await context.Response.WriteAsJsonAsync(
         new HttpValidationProblemDetails(errors) { Status = 400 });
 }));
 
@@ -39,3 +39,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+public partial class Program; // Exposed for WebApplicationFactory

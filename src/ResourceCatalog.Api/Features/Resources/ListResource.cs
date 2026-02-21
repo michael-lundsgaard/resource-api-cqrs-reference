@@ -10,13 +10,13 @@ namespace ResourceCatalog.Api.Features.Resources
 
         public class Handler(AppDbContext db) : IRequestHandler<Query, List<ResourceDto>>
         {
-            public async Task<List<ResourceDto>> Handle(Query request, CancellationToken ct)
+            public async Task<List<ResourceDto>> Handle(Query request, CancellationToken cancellationToken)
             {
                 return await db.Resources
                     .AsNoTracking()
                     .OrderByDescending(r => r.CreatedAt)
                     .Select(r => r.ToDto())
-                    .ToListAsync(ct);
+                    .ToListAsync(cancellationToken);
             }
         }
     }
